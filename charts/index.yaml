@@ -1,0 +1,30 @@
+apiVersion: v1
+entries:
+  ibm-mcm-prod:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: 2018-11-27T16:34:13.877408363-06:00
+    description: IBM Multi-cloud Manager
+    digest: 18b5769b8c0385e40e3367b0025084bd89ea2a17849f687250cc018ae0599cb8
+    name: ibm-mcm-prod
+    urls:
+    - https://raw.github.ibm.com/CASE/mcm-openshift-charts/master/charts/ibm-mcm-prod-3.1.1.tgz
+    version: 3.1.1
+  ibm-mcmk-prod:
+  - apiVersion: v1
+    appVersion: "1.0"
+    created: 2018-11-27T16:34:13.886143076-06:00
+    description: IBM Multi-Cloud Manager Klusterlet
+    digest: e58bf9a221befc8cd9e211d5e8c416a181d615ebfd06bdbeb356db4d2fa74b85
+    keywords:
+    - ICP
+    - Analytics
+    - deploy
+    - Commercial
+    - amd64
+    name: ibm-mcmk-prod
+    tillerVersion: '>=2.7.3'
+    urls:
+    - https://raw.github.ibm.com/CASE/mcm-openshift-charts/master/charts/ibm-mcmk-prod-3.1.1.tgz
+    version: 3.1.1
+generated: 2018-11-27T16:34:13.870271779-06:00

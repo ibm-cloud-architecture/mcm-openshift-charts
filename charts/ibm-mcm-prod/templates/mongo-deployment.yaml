@@ -1,0 +1,96 @@
+{{ if .Values.mongodb.enabled }}
+---
+apiVersion: v1
+kind: List
+items:
+  - apiVersion: extensions/v1beta1
+    kind: Deployment
+    metadata:
+      name: {{ template "ibm-mcm.fullname" . }}-mongodb
+      labels:
+        app: {{ template "ibm-mcm.name" . }}
+        chart: {{ template "ibm-mcm.chart" . }}
+        component: "mongodb"
+      namespace: kube-system
+    spec:
+      template:
+        metadata:
+          labels:
+            app: {{ template "ibm-mcm.name" . }}
+            chart: {{ template "ibm-mcm.chart" . }}
+            component: "mongodb"
+          annotations:
+            productName: "IBM Multi-cloud Manager - Server"
+            productID: "317a72a4f22645aaa1b7a07a83c60af5"
+            productVersion: "3.1.1"
+        spec:
+          containers:
+          - name: hcm-mongodb
+            image: "{{ .Values.mongodb.image.repository }}:{{ .Values.mongodb.image.tag }}"
+            imagePullPolicy: {{ .Values.mongodb.image.pullPolicy }}
+            env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: {{ .Values.mongodb.rootUsername }}
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: {{ .Values.mongodb.rootPassword }}
+            - name: MONGO_USERNAME
+              value: {{ .Values.mongodb.username }}
+            - name: MONGO_PASSWORD
+              value: {{ .Values.mongodb.password }}
+            - name: MONGO_INITDB_DATABASE
+              value: {{ .Values.mongodb.dbName }}
+            ports:
+            - name: mongodb
+              containerPort: 27017
+            livenessProbe:
+              exec:
+                command:
+                - mongo
+                - --eval
+                - "db.adminCommand('ping')"
+            {{- if .Values.mongodb.persistence }}
+            volumeMounts:
+              - name: mongopvc
+                mountPath: /data/db
+            {{- end }}
+          {{- if .Values.mongodb.persistence }}
+          volumes:
+            - name: mongopvc
+              persistentVolumeClaim:
+                claimName: {{ template "ibm-mcm.fullname" . }}-mongodb-pvc
+          {{- end }}
+          {{- if .Values.pullSecret.token }}
+          imagePullSecrets:
+          - name: "{{ template "ibm-mcm.fullname" . }}-regcred"
+          {{- end }}
+          {{- if .Values.nodeSelector.enabled }}
+          nodeSelector:
+          {{- if .Values.nodeSelector.arch }}
+            "beta.kubernetes.io/arch" : {{ .Values.nodeSelector.arch }}  
+          {{- end }}
+          {{- if .Values.nodeSelector.os }}
+            "beta.kubernetes.io/os" : {{ .Values.nodeSelector.os }}
+          {{- end }}
+          {{- if .Values.nodeSelector.customLabelSelector }}
+            {{ .Values.nodeSelector.customLabelSelector }} : {{ .Values.nodeSelector.customLabelValue}}
+          {{- end }}
+          {{- end }}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: {{ template "ibm-mcm.fullname" . }}-mongodb
+      labels:
+        app: {{ template "ibm-mcm.name" . }}
+        chart: {{ template "ibm-mcm.chart" . }}
+        component: "mongodb"
+      namespace: kube-system
+    spec:
+      ports:
+      - name: mongodb
+        port: 27017
+        targetPort: 27017
+      selector:
+        app: {{ template "ibm-mcm.name" . }}
+        chart: {{ template "ibm-mcm.chart" . }}
+        component: "mongodb"
+{{ end }}

@@ -1,0 +1,22 @@
+{{- if .Values.console.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "ibm-mcm.fullname" . }}-mcmui
+  labels:
+    app: {{ template "ibm-mcm.name" . }}
+    component: "mcmui"
+    chart: {{ template "ibm-mcm.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "ibm-mcm.name" . }}
+    component: "mcmui"
+    release: {{ .Release.Name }}
+{{- end }}

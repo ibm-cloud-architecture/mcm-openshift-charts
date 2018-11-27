@@ -1,0 +1,18 @@
+{{- if .Values.console.header.enabled }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    icp.management.ibm.com/auth-type: access-token
+    kubernetes.io/ingress.class: ibm-icp-management
+  name: platform-header
+  namespace: kube-system
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: platform-header
+          servicePort: 3000
+        path: /header/
+{{- end }}

@@ -1,0 +1,62 @@
+# Default values for hybrid-cluster-manager-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+klusterlet:
+  repository: docker-registry.default.svc.cluster.local:5000/kube-system/mcm-klusterlet
+  tag: 3.1.1
+  pullPolicy: Always
+  enabled: true
+  clusterName: null
+  clusterNamespace: null
+  tillersecret: null
+  autoGenTillerSecret: true
+  tillerUser: admin
+  apiserverConfig:
+    server: null
+    token: null
+    enableBootstrap: true
+  deployedOnHub: false
+  cloud: "IBM"
+  vendor: "ICP"
+  environment: "Dev"
+  region: "US"
+  datacenter: "toronto"
+  owner: "marketing"
+  prometheusAddress: null
+  prometheusPort: null
+  httpsProxy: null
+topology:
+  enabled: true
+  enableAuth: true
+  updateInterval: 15
+  username: admin # For weavescope basicauth
+  password: admin # For weavescope basicauth
+  weave:
+    image:
+      repository: docker-registry.default.svc.cluster.local:5000/kube-system/mcm-weave-scope
+      tag: 3.1.1
+      pullPolicy: Always
+
+router:
+  image:
+    repository: docker-registry.default.svc.cluster.local:5000/kube-system/icp-router
+    tag: 2.2.0
+
+compliance:
+  repository: docker-registry.default.svc.cluster.local:5000/kube-system/mcm-compliance
+  tag: 3.1.1
+  pullPolicy: Always
+  enabled: true
+
+logLevel: 5
+nodeSelector: 
+  enabled: false
+  arch: null
+  os: null
+  customLabelSelector: null
+  customLabelValue: null
+# this is needed when installing on non-ICP kubernetes clusters
+pullSecret:
+  token:
+    null

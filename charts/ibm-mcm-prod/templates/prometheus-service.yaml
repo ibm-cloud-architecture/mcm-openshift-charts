@@ -1,0 +1,23 @@
+{{- if .Values.controller.enabled }}
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: {{ template "ibm-mcm.name" . }}
+    chart: {{ template "ibm-mcm.chart" . }}
+    component: "mcm-prometheus"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  name: {{ template "ibm-mcm.fullname" . }}-prometheus
+
+spec:
+  selector:
+    app: {{ template "ibm-mcm.name" . }}
+    component: "mcm-prometheus"
+    release: {{ .Release.Name }}
+  ports:
+  - name: secure
+    protocol: TCP
+    port: 9090
+    targetPort: 8443
+{{- end }}

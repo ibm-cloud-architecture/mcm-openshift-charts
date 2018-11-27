@@ -1,0 +1,157 @@
+# Default values for hybrid-cluster-manager-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+klusterlet:
+  repository: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/mcm-klusterlet-amd64
+  tag: 3.1.1
+  pullPolicy: Always
+  enabled: false
+  tillersecret: null
+  autoGenTillerSecret: false
+  tillerUser: admin
+  cloud: "IBM"
+  vendor: "ICP"
+  environment: "Dev"
+  region: "US"
+  datacenter: "toronto"
+  owner: "marketing"
+  clusterName: mycluster.icp
+  apiserverConfig:
+    server: null
+    token: null
+    enableBootstrap: true
+  clusterNamespace: default
+  deployedOnHub: true
+  prometheusAddress: null
+  prometheusPort: null
+  httpsProxy: null
+
+
+controller:
+  repository: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/mcm-controller-amd64
+  tag: 3.1.1
+  pullPolicy: Always
+  enabled: true
+  enableClusterAutoApprove: true
+
+compliance:
+  repository: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/mcm-compliance-amd64
+  tag: 3.1.1
+  pullPolicy: Always
+  enabled: true
+  mcmNamespace: null
+
+etcd:
+  repository: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/etcd-amd64
+  tag: v3.2.18
+  pullPolicy: IfNotPresent
+  persistence: false
+  storageclassName:
+  storageCapacity: 1Gi
+  accessModes: ReadWriteMany
+
+topology:
+  enabled: false
+  enableAuth: true
+  updateInterval: 15
+  username: admin # For weavescope basicauth
+  password: admin # For weavescope basicauth
+  weave:
+    image:
+      repository: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/mcm-weave-scope-amd64
+      tag: 3.1.1
+      pullPolicy: Always
+
+prometheus:
+  image:
+    name: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/prometheus-amd64
+    tag: v2.3.1
+  port: 80
+  args:
+    retention: 24h
+  persistentVolume:
+    enabled: false
+    size: 10Gi
+    storageClass: "-"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 2Gi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  alertRuleFiles: alertRules
+
+mongodb:
+  enabled: true
+  image:
+      repository: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/mcm-mongodb-amd64
+      tag: 3.1.1
+      pullPolicy: Always
+  rootUsername: root
+  rootPassword: root
+  username: mongo
+  password: mongo
+  dbName: mcm
+  persistence: false
+  storageclassName: 
+  storageCapacity: 1Gi
+  accessModes: ReadWriteMany
+
+apiserver:
+  repository: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/mcm-api-amd64
+  tag: 3.1.1
+  pullPolicy: Always
+  enabled: true
+
+application:
+  repository: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/mcm-application-amd64
+  tag: 3.1.1
+  pullPolicy: Always
+  enabled: true
+
+logLevel: 5
+
+console:
+  enabled: true
+  mcmui:
+    image:
+      repository: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/mcm-ui-amd64
+      tag: 3.1.1
+      pullPolicy: Always
+  mcmuiapi:
+    image:
+      repository: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/mcm-ui-api-amd64
+      tag: 3.1.1
+      pullPolicy: Always
+  header:
+    enabled: true
+    image:
+      repository: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/platform-header-amd64
+      tag: 3.1.1-mcm
+      pullPolicy: Always
+    defaultAdminUser: admin
+
+# this is needed when installing on non-ICP kubernetes clusters
+# mcmdev@us.ibm.com
+pullSecret:
+  token: ewoJImF1dGhzIjogewoJCSJoeWMtY2xvdWQtcHJpdmF0ZS1pbnRlZ3JhdGlvbi1kb2NrZXItbG9jYWwuYXJ0aWZhY3Rvcnkuc3dnLWRldm9wcy5jb20iOiB7CgkJCSJ1c2VybmFtZSI6ICJtY21kZXZAdXMuaWJtLmNvbSIsCgkJCSJwYXNzd29yZCI6ICJBS0NwNWJDQkF6bWc4ZjVNTW13N2VHejlYanNRaDM5NzRKdlRwanFIdXVtNG90TEtWVzE4M3VucDlCZXNueWlxWVBuR25ueWNKIiwKCQkJImVtYWlsIjogIm1jbWRldkB1cy5pYm0uY29tIiwKCQkJImF1dGgiOiAiYldOdFpHVjJRSFZ6TG1saWJTNWpiMjA2UVV0RGNEVmlRMEpCZW0xbk9HWTFUVTF0ZHpkbFIzbzVXR3B6VVdnek9UYzBTblpVY0dweFNIVjFiVFJ2ZEV4TFZsY3hPRE4xYm5BNVFtVnpibmxwY1ZsUWJrZHVibmxqU2c9PSIKCQl9Cgl9Cn0=
+
+
+router:
+  image:
+    repository: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/icp-router-amd64
+    tag: 2.2.0
+
+openssl:
+  repository: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/mcm-openssl-amd64
+  tag: 0.1.0
+  pullPolicy: Always
+
+nodeSelector: 
+  enabled: false
+  arch: null
+  os: null
+  customLabelSelector: null
+  customLabelValue: null

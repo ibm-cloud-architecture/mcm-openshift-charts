@@ -1,0 +1,395 @@
+klusterlet:
+  __metadata:
+    label: "Multicloud Manager Klusterlet Configuration"
+  repository:
+    __metadata:
+      description: "Docker Image repository where klusterlet will pull from"
+      name: "Klusterlet Image Repository"
+      label: "Klusterlet Image Repository"
+      type: "string"
+      immutable: false
+      required: true
+  tag:
+    __metadata:
+      description: "Docker image tag for klusterlet image"
+      name: "Klusterlet Image Tag"
+      label: "Klusterlet Image Tag"
+      type: "string"
+      immutable: false
+      required: true
+  pullPolicy:
+    __metadata:
+      description: "Pull policy for klusterlet image"
+      label: "Klusterlet Image Pull Policy"
+      type: "string"
+      immutable: false
+      required: true
+      options:
+      - label: "IfNotPresent"
+        value: "IfNotPresent"
+      - label: "Always"
+        value: "Always"
+      - label: "Never"
+        value: "Never"
+  enabled:
+    __metadata:
+      description: "Enable klusterlet on cluster"
+      label: "Enable Klusterlet"
+      type: "boolean"
+      immutable: true
+      required: true
+  clusterName:
+    __metadata:
+      label: "Cluster Name"
+      description: "Name that this cluster will be identify as on the Hub-Cluster"
+      type: "string"
+      immutable: false
+      required: true
+  clusterNamespace:
+    __metadata:
+      name: "clusterNamespace"
+      label: "Cluster Namespace"
+      description: "Namespace on the Hub-Cluster for assigning cluster specific resources"
+      type: "string"
+      immutable: false
+      required: true
+  tillersecret:
+    __metadata:
+      name: "tillersecret"
+      label: "Klusterlet Tiller Secret Name"
+      description: "Name of the secret created for the Klusterlet to communicate with the Tiller server on the cluster"
+      type: "string"
+      immutable: false
+      required: false
+  autoGenTillerSecret:
+    __metadata:
+      name: "autoGenTillerSecret"
+      label: "Enable Automatic Generate Tiller Secret"
+      description: "Enable automatic generate tiller secret using cert manager"
+      type: "boolean"
+      immutable: false
+      required: false
+  tillerUser:
+    __metadata:
+      name: "tillerUser"
+      label: "Username to operate tiller by klusterlet"
+      description: "Username to operate tiller by klusterlet"
+      type: "string"
+      immutable: false
+      required: true
+  cloud:
+    __metadata:
+      name: "cloud"
+      label: "Cluster Cloud Provider"
+      description: "Cloud provider on which Kubernetes cluster is deployed"
+      type: "string"
+      immutable: false
+      required: true
+      options:
+      - label: "IBM"
+        value: "IBM"
+      - label: "AWS"
+        value: "AWS"
+      - label: "Azure"
+        value: "Azure"
+      - label: "Google"
+        value: "Google"
+      - label: "Openstack"
+        value: "Openstack"
+      - label: "VMware"
+        value: "VMware"
+      - label: "Other"
+        value: "Other"
+  vendor:
+    __metadata:
+      name: "Kubernetes vendor"
+      label: "Kubernetes Vendor"
+      description: "Vendor package of Kubernetes cluster software"
+      type: "string"
+      immutable: false
+      required: true
+      options:
+      - label: "ICP"
+        value: "ICP"
+      - label: "ICP-OpenShift"
+        value: "ICP-OpenShift"
+      - label: "IKS"
+        value: "IKS"
+  environment:
+    __metadata:
+      label: "Cluster Environment Type"
+      description: "The type of cluster environment"
+      type: "string"
+      immutable: false
+      required: true
+      options:
+      - label: "Dev"
+        value: "Dev"
+      - label: "Staging"
+        value: "Staging"
+      - label: "Prod"
+        value: "Prod"
+      - label: "QA"
+        value: "QA"
+      - label: "Other"
+        value: "Other"
+  region:
+    __metadata:
+      label: "Cluster Region"
+      description: "The geographic region in which the managed cluster runs"
+      type: "string"
+      immutable: false
+      required: true
+      options:
+      - label: "US"
+        value: "US"
+      - label: "EU"
+        value: "EU"
+      - label: "CAN"
+        value: "CAN"
+      - label: "LA"
+        value: "LA"
+      - label: "AP"
+        value: "AP"
+      - label: "CN"
+        value: "CN"
+  datacenter:
+    __metadata:
+      label: "Cluster Datacenter"
+      description: "The datacenter name in which the managed cluster runs."
+      type: "string"
+      immutable: false
+      required: true
+  owner:
+    __metadata:
+      label: "Cluster Owner"
+      description: "The business owner of the cluster."
+      type: "string"
+      immutable: false
+      required: true
+  deployedOnHub:
+    __metadata:
+      label: "Deploy to Hub Cluster?"
+      description: "Is this klusterlet on the Hub-Cluster"
+      type: "boolean"
+      required: true
+      immutable: false
+  apiserverConfig:
+    server:
+      __metadata:
+        label: "Hub Cluster Kubernetes API Server"
+        description: "Kubernetes API Server URL for the Hub-Cluster from kubectl config"
+        name: "Multicloud Manager HubClusterServer"
+        type: "string"
+        required: true
+        immutable: false
+    token:
+      __metadata:
+        label: "Hub Cluster Kubernetes API server token"
+        description: "Kubernete API Server token for the Hub-Cluster from kubectl config"
+        name: "Multicloud Manager HubClusterToken"
+        type: "string"
+        required: true
+        immutable: false
+    enableBootstrap:
+      __metadata:
+        label: "Enable Klusterlet Bootstrap"
+        description: "Enable klusterlet bootstrap"
+        type: "boolean"
+        immutable: false
+        required: true
+  prometheusAddress:
+    __metadata:
+      label: "Prometheus Address"
+      name: "Prometheus Address"
+      description: "Hostname or IP address of the Prometheus Monitoring Service"
+      type: "string"
+      immutable: false
+      required: false
+  prometheusPort:
+    __metadata:
+      label: "Prometheus Port"
+      name: "Prometheus Port"
+      description: "Ingress port of the Prometheus Monitoring Service"
+      type: "string"
+      immutable: false
+      required: false
+  httpsProxy:
+    __metadata:
+      label: "HTTPS Proxy"
+      name: "HTTPS Proxy"
+      description: "Set https_proxy environment variable for containers for Klusterlet pods in URL format, example, http://username:password@hostname:port"
+      type: "string"
+      immutable: false
+      required: false
+
+nodeSelector:
+  __metadata:
+    label: "Node Selector"
+  enabled:
+    __metadata:
+      label: "Enable Node Selector"
+      description: "Enable Node Selector"
+      type: "boolean"
+      immutable: false
+      required: false 
+  arch:
+    __metadata:
+      label: "Arch"
+      options:
+        - label: "ppc64le"
+          value: "ppc64le"
+        - label: "amd64"
+          value: "amd64"
+
+  os:
+    __metadata:
+      label: "Node OS"
+      options: 
+        - label: "linux"
+          value: "linux"
+
+  customLabelSelector:
+    __metadata:
+      name: "Custom Node Label Key"
+      label: "Custom Key"
+  customLabelValue: 
+    __metadata:
+      name: "Custom Node Label Value"
+      label: "Custom Value"
+
+topology:
+  __metadata:
+    label: "Multicloud Manager Topology configuration"
+    description: "Multicloud Manager enables management of multiple IBM Cloud private clusters"
+  enabled:
+    __metadata:
+      label: "Enable Topology"
+      description: "Enable Topology"
+      type: "boolean"
+      immutable: false
+      required: true
+  enableAuth:
+    __metadata:
+      label: "Enable Topology Authentication"
+      description: "Enable Topology Authentication"
+      type: "boolean"
+      immutable: false
+      required: false
+  updateInterval:
+    __metadata:
+      label: "Topology Update Interval"
+      description: "Topology Update Interval"
+      type: "number"
+      immutable: false
+      required: false
+  username:
+    __metadata:
+      label: "Username"
+      description: "Username of weavescope basicauth"
+      type: "string"
+      immutable: false
+      required: false
+  password:
+    __metadata:
+      label: "Password"
+      description: "Password of weavescope basicauth"
+      type: "string"
+      immutable: false
+      required: false
+  weave:
+    image:
+      repository:
+        __metadata:
+          name: "Weave Image Repository"
+          label: "Weave Image Repository"
+          description: "Weave Image Repository"
+          type: "string"
+          immutable: false
+          required: false
+      tag:
+        __metadata:
+          name: "Weave Image Tag"
+          label: "Weave Image Tag"
+          description: "Weave Image Tag"
+          type: "string"
+          immutable: false
+          required: false
+      pullPolicy:
+        __metadata:
+          label: "Weave Image Pull Policy"
+          description: "Weave Image Pull Policy"
+          type: "string"
+          required: false
+          options:
+          - label: "IfNotPresent"
+            value: "IfNotPresent"
+          - label: "Always"
+            value: "Always"
+          - label: "Never"
+            value: "Never"
+
+compliance:
+  __metadata:
+    label: "Multicloud Manager Compliance configuration"
+  repository:
+    __metadata:
+      name: "Compliance Image Repository"
+      label: "Compliance Image Repository"
+      description: "Compliance Image Repository"
+      type: "string"
+      immutable: false
+      required: true
+  tag:
+    __metadata:
+      name: "Compliance Image Tag"
+      label: "Compliance Image Tag"
+      description: "Compliance Image Tag"
+      type: "string"
+      immutable: false
+      required: true
+  pullPolicy:
+    __metadata:
+      label: "Compliance Image Pull Policy"
+      description: "Compliance Image Pull Policy"
+      type: "string"
+      immutable: false
+      required: true
+      options:
+      - label: "IfNotPresent"
+        value: "IfNotPresent"
+      - label: "Always"
+        value: "Always"
+      - label: "Never"
+        value: "Never"
+  enabled:
+    __metadata:
+      label: "Enable Compliance"
+      description: "Enable Compliance"
+      type: "boolean"
+      immutable: false
+      required: true
+
+pullSecret:
+  __metadata:
+    label: "Image Pull Secret"
+    description: "Image Pull Secret for authenticating with Docker Registory, required for non-ICP clusters"
+  token:
+    __metadata:
+      description: "Docker registry authentication token"
+      label: "Docker registry Authentication Token"
+
+router:
+  __metadata:
+    label: "Router"
+  image:
+    repository:
+      __metadata:
+        label: "Router Image Repository"
+        name: "Router Image Repository"
+    tag: 
+      __metadata:
+        label: "Router Image Tag"
+        name: "Router Image Tag"
+
+

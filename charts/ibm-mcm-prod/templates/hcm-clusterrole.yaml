@@ -1,0 +1,73 @@
+{{- if .Values.apiserver.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    rbac.icp.com/aggregate-to-icp-admin: "true"
+  name: {{ .Release.Name }}:admin-aggregate
+rules:
+- apiGroups: ["mcm.ibm.com"]
+  resources: ["resourceviews", "resourceviews/status", "works", "works/status", "worksets", "worksets/status"]
+  verbs: ["create", "get", "list", "watch", "update", "delete", "deletecollection", "patch"]
+- apiGroups: ["mcm.ibm.com"]
+  resources: ["clusterstatuses", "helmrepos", "helmrepos/status"]
+  verbs: ["create", "get", "list", "watch", "update", "delete", "deletecollection", "patch"]
+- apiGroups: ["clusterregistry.k8s.io"]
+  resources: ["clusters", "clusters/status"]
+  verbs: ["create", "get", "list", "watch", "update", "delete", "deletecollection", "patch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    rbac.icp.com/aggregate-to-icp-operate: "true"
+  name: {{ .Release.Name }}:operate-aggregate
+rules:
+- apiGroups: ["mcm.ibm.com"]
+  resources: ["resourceviews", "resourceviews/status", "works", "works/status", "worksets", "worksets/status"]
+  verbs: ["create", "get", "list", "watch", "update", "delete", "deletecollection", "patch"]
+- apiGroups: ["mcm.ibm.com"]
+  resources: ["clusterstatuses", "helmrepos", "helmrepos/status"]
+  verbs: ["create", "get", "list", "watch", "update", "patch"]
+- apiGroups: ["clusterregistry.k8s.io"]
+  resources: ["clusters", "clusters/status"]
+  verbs: ["create", "get", "list", "watch", "update", "patch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    rbac.icp.com/aggregate-to-icp-edit: "true"
+  name: {{ .Release.Name }}:edit-aggregate
+rules:
+- apiGroups: ["mcm.ibm.com"]
+  resources: ["resourceviews", "resourceviews/status", "works", "works/status", "worksets", "worksets/status"]
+  verbs: ["create", "get", "list", "watch", "update", "delete", "deletecollection", "patch"]
+- apiGroups: ["mcm.ibm.com"]
+  resources: ["clusterstatuses", "helmrepos", "helmrepos/status"]
+  verbs: ["get", "list", "watch", "update", "patch"]
+- apiGroups: ["clusterregistry.k8s.io"]
+  resources: ["clusters", "clusters/status"]
+  verbs: ["get", "list", "watch", "update", "patch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    rbac.icp.com/aggregate-to-icp-view: "true"
+  name: {{ .Release.Name }}:view-aggregate
+rules:
+- apiGroups: ["mcm.ibm.com"]
+  resources: ["resourceviews", "resourceviews/status", "works", "works/status", "worksets", "worksets/status"]
+  verbs: ["create", "get", "list", "watch", "update", "delete", "deletecollection", "patch"]
+- apiGroups: ["mcm.ibm.com"]
+  resources: ["clusterstatuses", "helmrepos", "helmrepos/status"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["clusterregistry.k8s.io"]
+  resources: ["clusters", "clusters/status"]
+  verbs: ["get", "list", "watch"]
+
+{{- end }}

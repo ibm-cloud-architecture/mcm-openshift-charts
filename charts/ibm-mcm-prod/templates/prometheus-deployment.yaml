@@ -1,0 +1,102 @@
+{{- if .Values.controller.enabled }}
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: {{ template "ibm-mcm.fullname" . }}-prometheus
+  labels:
+    app: {{ template "ibm-mcm.fullname" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    component: "mcm-prometheus"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "ibm-mcm.name" . }}
+      component: "mcm-prometheus"
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "ibm-mcm.name" . }}
+        component: "mcm-prometheus"
+        release: {{ .Release.Name }}
+      annotations:
+        productName: "IBM Multi-cloud Manager - Server"
+        productID: "317a72a4f22645aaa1b7a07a83c60af5"
+        productVersion: "3.1.1"
+    spec:
+      containers:
+        - name: prometheus
+          image: {{ .Values.prometheus.image.name }}:{{ .Values.prometheus.image.tag }}
+          imagePullPolicy: "IfNotPresent"
+          args:
+            - --config.file=/etc/config/prometheus.yml
+            - --storage.tsdb.path=/var/lib/prometheus/data
+            - --storage.tsdb.retention={{ .Values.prometheus.args.retention }}
+          ports:
+            - containerPort: 9090
+          resources:
+{{ toYaml .Values.prometheus.resources | indent 12 }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
+            - name: storage-volume
+              mountPath: /var/lib/prometheus/data
+        - name: router
+          image: {{ .Values.router.image.repository }}:{{ .Values.router.image.tag }}
+          command: ["/opt/ibm/router/entry/entrypoint.sh"]
+          ports:
+          - name: router
+            containerPort: 8080
+          volumeMounts:
+            - mountPath: "/opt/ibm/router/conf"
+              name: router-config
+            - mountPath: "/opt/ibm/router/certs"
+              name: monitoring-server-certs
+            - mountPath: "/opt/ibm/router/client-certs"
+              name: monitoring-ca-secret
+            - mountPath: "/opt/ibm/router/entry"
+              name: router-entry
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ template "ibm-mcm.fullname" . }}-prometheus
+        - name: router-config
+          configMap:
+            name: {{ template "ibm-mcm.fullname" . }}-router-nginx-config
+        - name: monitoring-ca-secret
+          secret:
+            secretName: {{ template "ibm-mcm.fullname" . }}-prometheus-ca-secrets
+        - name: monitoring-server-certs
+          secret:
+            secretName: {{ template "ibm-mcm.fullname" . }}-prometheus-client-secrets
+        - name: router-entry
+          configMap:
+            name: {{ template "ibm-mcm.fullname" . }}-router-entry-config
+            defaultMode: 0744
+        - name: storage-volume
+        {{- if .Values.prometheus.persistentVolume.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ template "ibm-mcm.fullname" . }}-prometheus-pvc
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
+      {{- if .Values.pullSecret.token }}
+      imagePullSecrets:
+      - name: "{{ template "ibm-mcm.fullname" . }}-regcred"
+      {{- end }}
+      {{- if .Values.nodeSelector.enabled }}
+      nodeSelector:
+      {{- if .Values.nodeSelector.arch }}
+        "beta.kubernetes.io/arch" : {{ .Values.nodeSelector.arch }}  
+      {{- end }}
+      {{- if .Values.nodeSelector.os }}
+        "beta.kubernetes.io/os" : {{ .Values.nodeSelector.os }}
+      {{- end }}
+      {{- if .Values.nodeSelector.customLabelSelector }}
+        {{ .Values.nodeSelector.customLabelSelector }} : {{ .Values.nodeSelector.customLabelValue}}
+      {{- end }}
+      {{- end }}
+{{- end }}

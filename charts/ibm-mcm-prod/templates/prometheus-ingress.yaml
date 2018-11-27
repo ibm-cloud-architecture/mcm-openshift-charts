@@ -1,0 +1,65 @@
+{{- if .Values.controller.enabled }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    icp.management.ibm.com/auth-type: access-token
+    icp.management.ibm.com/rewrite-target: /
+    icp.management.ibm.com/secure-backends: "true"
+    icp.management.ibm.com/secure-client-ca-secret: {{ template "ibm-mcm.fullname" . }}-prometheus-client-secrets
+    icp.management.ibm.com/configuration-snippet: |
+      header_filter_by_lua_block { ngx.header.content_length = nil }
+      body_filter_by_lua_block {
+        local data = ngx.arg[1]
+        if string.startswith(ngx.header.content_type, 'text/html') then
+          data = ngx.re.gsub(data, '="/','="/mcm-monitor/')
+          data = ngx.re.gsub(data, 'var PATH_PREFIX = "";','var PATH_PREFIX = "/mcm-monitor";')
+          data = ngx.re.gsub(data, 'href="/mcm-monitor/"','href="/mcm-monitor"')
+        end
+        ngx.arg[1] = data
+      }
+    kubernetes.io/ingress.class: ibm-icp-management
+  labels:
+  name: {{ template "ibm-mcm.fullname" . }}-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: {{ template "ibm-mcm.fullname" . }}-prometheus
+          servicePort: 9090
+        path: /mcm-monitor/
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    icp.management.ibm.com/auth-type: access-token
+    icp.management.ibm.com/configuration-snippet: |
+      header_filter_by_lua_block { ngx.header.content_length = nil }
+      body_filter_by_lua_block {
+        local data = ngx.arg[1]
+        if string.startswith(ngx.header.content_type, 'text/html') then
+          data = ngx.re.gsub(data, '="/','="/mcm-monitor/')
+          data = ngx.re.gsub(data, 'var PATH_PREFIX = "";','var PATH_PREFIX = "/mcm-monitor";')
+          data = ngx.re.gsub(data, 'href="/mcm-monitor/"','href="/mcm-monitor"')
+        end
+        ngx.arg[1] = data
+      }
+    icp.management.ibm.com/location-modifier: =
+    icp.management.ibm.com/secure-backends: "true"
+    icp.management.ibm.com/secure-client-ca-secret: {{ template "ibm-mcm.fullname" . }}-prometheus-client-secrets
+    icp.management.ibm.com/upstream-uri: /graph
+    kubernetes.io/ingress.class: ibm-icp-management
+  name: {{ template "ibm-mcm.fullname" . }}-graph-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: {{ template "ibm-mcm.fullname" . }}-prometheus
+          servicePort: 9090
+        path: /mcm-monitor
+{{- end -}}

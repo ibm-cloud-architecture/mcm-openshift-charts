@@ -1,0 +1,29 @@
+charts:
+- archive: 'file:../../../repo/stable/ibm-mcmk-prod-3.1.1.tgz'
+  repository-keys:
+    - klusterlet.repository
+    - compliance.repository
+    - topology.weave.image.repository
+
+images:
+- image: mcm-compliance:3.1.1
+  references:
+  - repository: mcm-compliance:3.1.1
+    pull-repository: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/mcm-compliance-ppc64le:3.1.1
+    pull-authorization:
+      username: mcmdev@us.ibm.com
+      password: AKCp5bCBAzmg8f5MMmw7eGz9XjsQh3974JvTpjqHuum4otLKVW183unp9BesnyiqYPnGnnycJ
+- image: mcm-klusterlet:3.1.1
+  references:
+  - repository: mcm-klusterlet:3.1.1
+    pull-repository: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/mcm-klusterlet-ppc64le:3.1.1
+    pull-authorization:
+      username: mcmdev@us.ibm.com
+      password: AKCp5bCBAzmg8f5MMmw7eGz9XjsQh3974JvTpjqHuum4otLKVW183unp9BesnyiqYPnGnnycJ
+- image: mcm-weave-scope:3.1.1
+  references:
+  - repository: mcm-weave-scope:3.1.1
+    pull-repository: hyc-cloud-private-integration-docker-local.artifactory.swg-devops.com/ibmcom/mcm-weave-scope-ppc64le:3.1.1
+    pull-authorization:
+      username: mcmdev@us.ibm.com
+      password: AKCp5bCBAzmg8f5MMmw7eGz9XjsQh3974JvTpjqHuum4otLKVW183unp9BesnyiqYPnGnnycJ

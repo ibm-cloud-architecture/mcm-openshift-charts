@@ -1,0 +1,92 @@
+{{- if .Values.console.enabled }}
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "ibm-mcm.fullname" . }}-mcmuiapi
+  labels:
+    app: {{ template "ibm-mcm.name" . }}
+    chart: {{ template "ibm-mcm.chart" . }}
+    component: "mcmui"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "ibm-mcm.name" . }}
+      component: "mcmuiapi"
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "ibm-mcm.name" . }}
+        component: "mcmuiapi"
+        release: {{ .Release.Name }}
+      annotations:
+        productName: "IBM Multi-cloud Manager - Server"
+        productID: "317a72a4f22645aaa1b7a07a83c60af5"
+        productVersion: "3.1.1"
+    spec:
+      containers:
+      - name: hcm-ui-api
+        image: "{{ .Values.console.mcmuiapi.image.repository }}:{{ .Values.console.mcmui.image.tag }}"
+        imagePullPolicy: {{ .Values.console.mcmuiapi.image.pullPolicy }}
+        env:
+        - name: cfcRouterUrl
+          value: https://icp-management-ingress:8443
+        - name: hcmApiVersion
+          value: V2
+        - name: PLATFORM_IDENTITY_PROVIDER_URL
+          value: https://icp-management-ingress:8443/idprovider
+        - name: mongodbUrl
+          value: {{ if  .Values.mongodb.url }}
+            {{- .Values.mongodb.url | quote }}
+            {{- else if and .Values.mongodb.username .Values.mongodb.usePassword -}}
+            'mongodb://{{ .Values.mongodb.username }}:{{ .Values.mongodb.password }}@{{ template "ibm-mcm.fullname" . }}-mongodb.{{ .Release.Namespace }}.svc.cluster.local/{{ .Values.mongodb.dbName }}'
+            {{- else -}}
+            'mongodb://mongo:mongo@{{ template "ibm-mcm.fullname" . }}-mongodb.{{ .Release.Namespace }}.svc.cluster.local/{{ .Values.mongodb.dbName }}'
+            {{- end }}
+        - name: complianceNamespace
+          value: {{- if (.Values.compliance.mcmNamespace) }}
+            {{ .Values.compliance.mcmNamespace }}
+            {{- else }}
+            {{ .Release.Namespace }}
+            {{- end }}
+        ports:
+        - containerPort: 4000
+          protocol: TCP
+        volumeMounts:
+        - name: cert
+          mountPath: /opt/ibm/mcm-ui-api/sslcert
+      {{- if .Values.pullSecret.token }}
+      imagePullSecrets:
+      - name: "{{ template "ibm-mcm.fullname" . }}-regcred"
+      {{- end }}
+      initContainers:
+      - name: cert-gen
+        image: "{{ .Values.openssl.repository }}:{{ .Values.openssl.tag }}"
+        imagePullPolicy: {{ .Values.openssl.pullPolicy }}
+        env:
+          - name: COMMON_NAME
+            value: mcmuiapi
+          - name: KEY_NAME
+            value: mcmuiapi
+        volumeMounts:
+        - name: cert
+          mountPath: "/certs"
+      volumes:
+      - name: cert
+        emptyDir: {}
+      {{- if .Values.nodeSelector.enabled }}
+      nodeSelector:
+      {{- if .Values.nodeSelector.arch }}
+        "beta.kubernetes.io/arch" : {{ .Values.nodeSelector.arch }}  
+      {{- end }}
+      {{- if .Values.nodeSelector.os }}
+        "beta.kubernetes.io/os" : {{ .Values.nodeSelector.os }}
+      {{- end }}
+      {{- if .Values.nodeSelector.customLabelSelector }}
+        {{ .Values.nodeSelector.customLabelSelector }} : {{ .Values.nodeSelector.customLabelValue}}
+      {{- end }}
+      {{- end }}
+{{- end }}
