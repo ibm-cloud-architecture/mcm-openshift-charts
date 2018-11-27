@@ -70,7 +70,8 @@ helm package ${CHARTS_PATH}/ibm-mcmk-prod
 # Build helm repo
 mv ibm-mcm-prod-${CHARTS_VERSION}.tgz charts
 mv ibm-mcmk-prod-${CHARTS_VERSION}.tgz charts
-helm repo index charts --url=https://raw.github.ibm.com/CASE/mcm-openshift-charts/master/charts/
+#helm repo index charts --url=https://raw.github.ibm.com/CASE/mcm-openshift-charts/master/charts
+helm repo index charts --url=https://raw.githubusercontent.com/ibm-cloud-architecture/mcm-openshift-charts/master/charts
 
 # Clean up
 rm -rf ${CHARTS_PATH}/ibm-mcm-prod
