@@ -9,7 +9,7 @@ if [ -z "$CHARTS_PATH" ]; then
 fi
 
 if [ -z "$REGISTRY" ]; then
-	REGISTRY="docker-registry.default.svc.cluster.local:5000"
+	REGISTRY="docker-registry.default.svc:5000"
 	echo "No REGISTRY provided! Using ${REGISTRY}"
 fi
 
