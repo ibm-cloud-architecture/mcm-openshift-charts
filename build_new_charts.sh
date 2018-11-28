@@ -1,12 +1,18 @@
 #!/bin/bash
-CHARTS_PATH="$1"
+PPA_PATH="$1"
 REGISTRY="$2"
 CHARTS_VERSION="$3"
 
-if [ -z "$CHARTS_PATH" ]; then
-	CHARTS_PATH="mcm-3.1.1-amd64/charts"
-	echo "No CHARTS_PATH provided! Using ${CHARTS_PATH}"
+set -e
+#set -x
+
+if [ -z "$PPA_PATH" ]; then
+	PPA_PATH="mcm-3.1.1-amd64.tgz"
+	echo "No PPA_PATH provided! Using ${PPA_PATH}"
 fi
+
+PPA_FOLDER=$(basename ${PPA_PATH} .tgz)
+CHARTS_PATH="${PPA_FOLDER}/charts"
 
 if [ -z "$REGISTRY" ]; then
 	REGISTRY="docker-registry.default.svc:5000"
@@ -27,6 +33,8 @@ function update_image() {
 }
 
 # Untar PPA
+mkdir ${PPA_FOLDER}
+tar -xvf ${PPA_PATH} -C ${PPA_FOLDER}
 
 # Untar Charts
 tar -xvf ${CHARTS_PATH}/ibm-mcm-prod-${CHARTS_VERSION}.tgz -C ${CHARTS_PATH}
@@ -76,3 +84,4 @@ helm repo index charts --url=https://raw.githubusercontent.com/ibm-cloud-archite
 # Clean up
 rm -rf ${CHARTS_PATH}/ibm-mcm-prod
 rm -rf ${CHARTS_PATH}/ibm-mcmK-prod
+rm -rf ${PPA_FOLDER}
